@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Calculation{% endblock title %}
+
+{% block body %}       
+<div class="container">
+    <form method="GET" action="{% url 'submitquery'%}">
+        {% csrf_token %}
+      <div class="mb-3">
+        <label for="Text" class="form-label">Formula</label>
+        <input type="text" name="expression" class="form-control" id="Text" aria-describedby="emailHelp" placeholder="Enter the Expression">
+        <div id="emailHelp" class="form-text">Formula to calculate the result</div>
+      </div>
+      <div class="mb-3">
+        <label for="Price" class="form-label">Price Tolerance</label>
+        <input type="text" name="price" class="form-control" id="Price"  placeholder="Enter Price Tolerance Percentage">
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Calculate</button>
+      <button type="reset" class="btn btn-danger">Clear</button>
+    </form>
+    <br>
+    <br>
+    <br>
+    <p><b>RESULT:</b></p>
+    <b>{{value}}</b>
+  </div>
+
+
+  {% endblock body %}
