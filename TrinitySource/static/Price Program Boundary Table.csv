@@ -1,0 +1,18 @@
+﻿Contract_ID,Program_ID,Start_Date,End_Date,Discount_Offered
+St. Michael,SMP1,Jan-10,,20%
+St. Barry,SBP1,May-94,Jun-21,40%
+St. Barry,SBP2,May-94,,30%
+St. Barry,SBP3,May-94,Jun-21,50%
+St. Anna,SAP1,Jan-19,,1%
+St. Anna,SAP2,Jan-19,Jun-21,5%
+St. Dozer,SDP1,Apr-18,May-20,7%
+St. Cypher,SCP1,Oct-18,Jun-21,19%
+St. Cypher,SCP2,Oct-18,Mar-19,12%
+St. Mouse,SMoP1,Jul-19,Mar-20,6%
+St. Potus,SPP1,Jan-17,Jun-21,21%
+St. Morevingian,SMoP1,May-03,Nov-18,4%
+St. Morevingian,SMoP2,May-03,Nov-12,4%
+St. Neo,SNP1,Jan-20,Jun-21,18%
+St. Morpheus,Smonp1,Aug-20,Mar-21,4%
+St. Morpheus,Smonp2,Aug-20,Aug-21,6%
+St. Morpheus,Smonp3,Aug-20,Jun-21,9%

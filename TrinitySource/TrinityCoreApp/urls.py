@@ -8,5 +8,6 @@ urlpatterns = [
     path('about',views.about,name='TrinityCoreApp'),
     path('version',views.version,name='TrinityCoreApp'),
     path('static\sample.txt',views.text,name='TrinityCoreApp'),
-    path('submitquery',views.submitquery,name='submitquery')
+    path('submitquery',views.submitquery,name='submitquery'),
+    path('PlotDiagram',views.PlotDiagram,name='PlotDiagram')
 ]

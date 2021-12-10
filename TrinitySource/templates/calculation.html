@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}Calculation{% endblock title %}
 
-{% block body %}       
+{% block body %}   
+  
 <div class="container">
     <form method="GET" action="{% url 'submitquery'%}">
         {% csrf_token %}
@@ -14,19 +15,78 @@
         <label for="Price" class="form-label">Price Tolerance</label>
         <input type="text" name="price" class="form-control" id="Price"  placeholder="Enter Price Tolerance Percentage">
       </div>
-      <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-      </div>
-      <button type="submit" class="btn btn-primary">Calculate</button>
-      <button type="reset" class="btn btn-danger">Clear</button>
+      <button type="submit" class="btn btn-primary" name="submit">Calculate</button>
+      <button type="reset" class="btn btn-danger" name="reset">Clear</button>
     </form>
+
     <br>
     <br>
+    <h3><b>NETWORK LEVELS :</b></h3>
+    <div id="item-list"></div>
     <br>
-    <p><b>RESULT:</b></p>
-    <b>{{value}}</b>
+    <br>
+    <form method="GET" action="{% url 'PlotDiagram'%}">
+      <div class="mb-3">
+        <button type="submit" class="btn btn-secondary" name="Plot">Plot Bayesian Network</button>
+      </div>
+    </form>
+    <h3><b>BAYESIAN RESULT :</b></h3>
+    <h4>Probability for WAC with respect to direct sales: </h4>
+    <br>
+    <p>{{WAC}}</p>
+    <br>
+    <br>
+    <h4>Probability for Contract Boundary Reached with respect to direct sales: </h4>
+    <br>
+    <p>{{Contract}}</p>
+    <br>
+    <br>
+    <h4>Probability for Price Program Boundary Reached with respect to direct sales: </h4>
+    <br>
+    <p>{{PriceProgram}}</p>
+    <br>
+    <br>
+    <h3><b>PREDICTION :</b></h3>
+    <h5>There is <b>{{maxProbability}}%</b> chance that direct sale variance is caused by  <b>{{maxProbabilityList}}</b></h5>
   </div>
-
-
-  {% endblock body %}
+  <br>
+  <br>
+  <br>
+  <div class="container">
+    <h2 class="text-center"><u>{{maxProbabilityList}} Table Data</u></h2><br> 
+    <br>           
+    <br>           
+    <table class="table table-dark table-striped">
+      <thead>
+        <tr>
+          <th>Contract ID</th>
+          <th>Program ID</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% if d %}  
+      {% for i in d %}
+        <tr>
+          <td>{{i.Contract_ID}}</td>
+          <td>{{i.Program_ID}}</td>
+          <td>{{i.Start_Date}}</td>
+          <td>{{i.End_Date}}</td>
+        </tr>
+      {% endfor %}
+      {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <script type="text/javascript"> 
+    var nHTML = "";
+    var a = "{{value}}";
+    var array =a.split("|");
+    var array = array.splice(0,array.length-1);
+    array.forEach(function(item) {
+      nHTML +='<li><b>' + item + '</b></li>';
+    });
+      document.getElementById("item-list").innerHTML = '<ul>' + nHTML + '</ul>'
+ </script>
+{% endblock body %}
