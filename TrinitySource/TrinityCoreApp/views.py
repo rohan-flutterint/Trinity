@@ -29,7 +29,7 @@ def text(request):
     return render(request,'text.html')
 
 def pretify(str,arr):
-    final = """{i}(0): {val1} ||  {i}(1): {val2}""".format(i=str,val1=arr[0],val2=arr[1])
+    final = """{i}(1)  : {val2}""".format(i=str,val2=arr[1])
     return final
 
 def submitquery(request):

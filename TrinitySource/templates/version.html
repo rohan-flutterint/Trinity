@@ -3,20 +3,28 @@
 
 {% block body %} 
 <div class="container">
+    <br>
     <div class="row">
         <div class="col-md-12">
-            <h1>Application Version</h1>
+            <h1>Application Version Details</h1>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <p>
-                <strong>version: 1.0</strong>
-            </p>
+    <br>
+    <br>
+    <p>
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+          Click For Version Details
+        </button>
+    </p>
+      <div style="min-height: 70px;">
+        <div class="collapse collapse-horizontal" id="collapseWidthExample">
+          <div class="card card-body" style="width: 300px;">
+            <b>Trinity Version: 1.0</b>
+          </div>
         </div>
-    </div>  
+      </div>
     <ul class="list-group list-group-flush">
-        <li class="list-group-item"><strong>Modules List</strong></li>
+        <li class="list-group-item"><strong>Modules Used With Version</strong></li>
         <li class="list-group-item">asgiref==3.4.1</li>
         <li class="list-group-item">bnlearn==0.4.8</li>
         <li class="list-group-item">certifi==2021.10.8</li>
