@@ -5,6 +5,7 @@ from sympy import Symbol, Derivative,degree_list
 from sympy.core.symbol import Str
 import bnlearn as bn
 import pandas as pd
+import numpy as np
 import os
 import re
 import TrinityCoreApp
@@ -33,7 +34,56 @@ def pretify(str,arr):
     return final
 
 def submitquery(request):
-    df = pd.read_excel('static/sample.xlsx',sheet_name='DataSet1')
+    path=os.getcwd()
+    expression=request.GET['expression']
+    price=request.GET['price']
+
+    price=int(price)
+    df = pd.read_excel('static/Referance.xlsx',sheet_name='DataSet1')
+    sample_df = pd.read_excel('static/Referance.xlsx',sheet_name='CalcDataSet1')
+    sample_filtered_df = sample_df.iloc[-2:]
+
+    Price_variance_value = format(((sample_filtered_df["y"].iloc[1]-sample_filtered_df["y"].iloc[0])/sample_filtered_df["y"].iloc[0])*100,".2f")
+    Direct_sales_variance_value = ((sample_filtered_df["a"].iloc[1]-sample_filtered_df["a"].iloc[0])/sample_filtered_df["a"].iloc[0])*100
+    para1_variance_value=((sample_filtered_df["b"].iloc[1]-sample_filtered_df["b"].iloc[0])/sample_filtered_df["b"].iloc[0])*100
+    para2_variance_value=((sample_filtered_df["c"].iloc[1]-sample_filtered_df["c"].iloc[0])/sample_filtered_df["c"].iloc[0])*100
+
+    partialderix= Derivative(expression, x).doit()
+    partialderiy= Derivative(expression, y).doit()
+    partialderiz= Derivative(expression, z).doit()
+    direct_sales=0
+    para1_val=0
+    para2_val=0
+    if (Direct_sales_variance_value >= para1_variance_value) and (Direct_sales_variance_value >= para2_variance_value):
+        diff2x=Derivative(partialderix, x).doit()
+        sample=str(diff2x)
+        if sample[0] not in ('x','y','z'):
+            direct_sales=int(sample[0])
+        else:
+            direct_sales=1
+        output_result1="Price variance from previous period is {0} % , Input price tolerance limit is {1} % .".format(Price_variance_value,price)
+        output_result2="Variance in node 'A' is effecting by {0} % ".format(Direct_sales_variance_value)
+    elif (para1_variance_value >= Direct_sales_variance_value) and (para1_variance_value >= para2_variance_value):
+        diff2y=Derivative(partialderiy, y).doit()
+        sample=str(diff2y)
+        if sample[0] not in ('x','y','z'):
+            para1_val=int(sample[0])
+        else:
+            para1_val=1
+        output_result1="Price variance from previous period is {0} % , Input price tolerance limit is {1} % .".format(Price_variance_value,price)
+        output_result2="Variance in node 'B' is effecting by {0} % ".format(para1_variance_value)
+    else:
+        diff2z=Derivative(partialderiz, z).doit()
+        sample=str(diff2z)
+        if sample[0] not in ('x','y','z'):
+            para2_val=int(sample[0])
+        else:
+            para2_val=1
+        output_result1="Price variance from previous period is {0} % , input price tolerance limit is {1} % .".format(Price_variance_value,price)
+        output_result2="Variance in node 'C' is effecting by {2} % ".format(para2_variance_value)
+
+
+
     edges = [('WAC Price Change', 'Direct Sale Variance'),
     ('Contract Boundary Reached', 'Direct Sale Variance'),
     ('Price Program Boundary Reached', 'Direct Sale Variance')
@@ -52,8 +102,7 @@ def submitquery(request):
     predict_PriceProgram_wrt_DirectSales1 = bn.inference.fit(DAG1, variables=['Price Program Boundary Reached'],
     evidence={'Direct Sale Variance':1})
 
-    expression=request.GET['expression']
-    price=request.GET['price']
+
     String=''
     String+=str("level :0  "+str(expression.split(' ')))  + '|' 
     lis=expression.split('+')
@@ -61,18 +110,21 @@ def submitquery(request):
     sample=[]
     # sum(list(map(sum, list(degree_list(expression)))))
     level=sum(list(degree_list(expression)))
-    for j in range(1,level):
+    for j in range(1,level+1):
         sample=[]
         for i in lis:
             dfx= Derivative(i, x).doit()
             dfy= Derivative(i, y).doit()
             dfz= Derivative(i, z).doit()
-            if dfx!=0:
-                sample.append(dfx)
-            if dfy!=0:
-                sample.append(dfy)
-            if dfz!=0:
-                sample.append(dfz)
+            if dfx!=0 or dfy!=0 or dfz!=0:
+                if dfx!=0:
+                    sample.append(dfx)
+                if dfy!=0:
+                    sample.append(dfy)
+                if dfz!=0:
+                    sample.append(dfz)
+            else:
+                sample.append(0)
         lis=sample
         String+=str("level :"+str(j+1)+"  "+str(sample)) + '|'  
     
@@ -91,10 +143,10 @@ def submitquery(request):
     if max_probability_value_temp in predict_PriceProgram_wrt_DirectSales1_values:
         probString="Price Program Boundary"
 
-    path=os.getcwd()
+    
     final_path=path+"\static\{i} table.csv".format(i=probString)
-    df = pd.read_csv(final_path,usecols =['Contract_ID','Program_ID','Start_Date','End_Date'])
-    df_final=df
+    cdf = pd.read_csv(final_path,usecols =['Contract_ID','Program_ID','Start_Date','End_Date'])
+    df_final=cdf
     filtered_df = df_final[(df_final['End_Date']=="Jun-21")]
     json_record=filtered_df.to_json(orient ='records')
     data = []
@@ -106,13 +158,15 @@ def submitquery(request):
     "PriceProgram":pretify("Price Program Boundary",predict_PriceProgram_wrt_DirectSales1.values),
     "maxProbabilityList":probString,
     "maxProbability":format(max_probability_value*100,".3f"),
-    'd': data
+    'd': data,
+    "output_result1":output_result1,
+    "output_result2":output_result2
     }
     return render(request,'calculation.html',context)  
     
 
 def PlotDiagram(request):
-    df = pd.read_excel('static/sample.xlsx',sheet_name='DataSet1')
+    df = pd.read_excel('static/Referance.xlsx',sheet_name='DataSet1')
     edges = [('WAC Price Change', 'Direct Sale Variance'),
     ('Contract Boundary Reached', 'Direct Sale Variance'),
     ('Price Program Boundary Reached', 'Direct Sale Variance')
