@@ -4,6 +4,18 @@
 {% block body %}   
   
 <div class="container">
+    <br>
+    <p>
+      <a class="btn btn-success" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        STEP 1
+      </a>
+    </p>
+    <div class="collapse" id="collapseExample">
+      <div class="card card-body">
+        Step-1  Identify evidence bucket based on the differential.
+      </div>
+    </div>
+    <br>
     <form method="GET" action="{% url 'submitquery'%}">
         {% csrf_token %}
       <div class="mb-3">
@@ -18,6 +30,7 @@
       <button type="submit" class="btn btn-primary" name="submit">Calculate</button>
       <button type="reset" class="btn btn-danger" name="reset">Clear</button>
     </form>
+
     <br>
     <br>
     <div class="card">
@@ -40,6 +53,19 @@
       </div>
     </div>
     <br>
+    <br>
+    <div class="border-top my-3"></div>
+    <br>
+    <p>
+      <a class="btn btn-success" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        STEP 2
+      </a>
+    </p>
+    <div class="collapse" id="collapseExample">
+      <div class="card card-body">
+        Step-2  Inference using Bayesian network.
+      </div>
+    </div>
     <br>
     <form method="GET" action="{% url 'PlotDiagram'%}">
       <div class="mb-3">
@@ -81,6 +107,19 @@
     </div>
     <br>
     <br>
+    <div class="border-top my-3"></div>
+    <br>
+    <p>
+      <a class="btn btn-success" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        STEP 3
+      </a>
+    </p>
+    <div class="collapse" id="collapseExample">
+      <div class="card card-body">
+        Step-3  Insights
+      </div>
+    </div>
+    <br>
     <div class="card text-center">
       <div class="card-header">
         <ul class="nav nav-pills card-header-pills">
@@ -92,7 +131,7 @@
       <div class="card-body">
         <h5 class="card-title"><u>PREDICTION</u></h5>
         <p class="card-text"><h5>There is <b>{{maxProbability}}%</b> chance that direct sale variance is caused by  <b>{{maxProbabilityList}}</b></h5></p>
-        <a href="#" class="btn btn-primary">Go To Top</a>
+        <a href="#" class="btn btn-success">Go To Top</a>
       </div>
     </div>
   </div>
