@@ -9,4 +9,4 @@ Steps to run the local server: <br />
 -> Open browser and type url :- localhost:8000
 
 
-![image](https://user-images.githubusercontent.com/82864904/144184454-bbd9da95-651e-4fde-9970-1e0f6ca3543c.png)
+![image](https://user-images.githubusercontent.com/82864904/145683164-b3c80c20-6c9b-4d68-b3a1-d4156fc9475f.png)
