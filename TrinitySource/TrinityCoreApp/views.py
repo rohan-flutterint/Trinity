@@ -10,6 +10,11 @@ import os
 import re
 import TrinityCoreApp
 import json
+import pydot
+import os
+path=os.getcwd()
+graphvizPath=f"{path}/Graphviz/bin/"
+os.environ["PATH"] += os.pathsep + graphvizPath
 # x+(3*y*z)
 
 x=Symbol('x')
@@ -37,7 +42,7 @@ def submitquery(request):
     path=os.getcwd()
     expression=request.GET['expression']
     price=request.GET['price']
-
+    generateGraph(expression)
     price=int(price)
     df = pd.read_excel('static/Referance.xlsx',sheet_name='DataSet1')
     sample_df = pd.read_excel('static/Referance.xlsx',sheet_name='CalcDataSet1')
@@ -62,7 +67,7 @@ def submitquery(request):
         else:
             direct_sales=1
         output_result1="Price variance from previous period is {0} % , Input price tolerance limit is {1} % .".format(Price_variance_value,price)
-        output_result2="Variance in node 'A' is effecting by {0} % ".format(Direct_sales_variance_value)
+        output_result2="Variance in node 'X' is effecting by {0} % ".format(Direct_sales_variance_value)
     elif (para1_variance_value >= Direct_sales_variance_value) and (para1_variance_value >= para2_variance_value):
         diff2y=Derivative(partialderiy, y).doit()
         sample=str(diff2y)
@@ -71,7 +76,7 @@ def submitquery(request):
         else:
             para1_val=1
         output_result1="Price variance from previous period is {0} % , Input price tolerance limit is {1} % .".format(Price_variance_value,price)
-        output_result2="Variance in node 'B' is effecting by {0} % ".format(para1_variance_value)
+        output_result2="Variance in node 'Y' is effecting by {0} % ".format(para1_variance_value)
     else:
         diff2z=Derivative(partialderiz, z).doit()
         sample=str(diff2z)
@@ -80,7 +85,7 @@ def submitquery(request):
         else:
             para2_val=1
         output_result1="Price variance from previous period is {0} % , input price tolerance limit is {1} % .".format(Price_variance_value,price)
-        output_result2="Variance in node 'C' is effecting by {2} % ".format(para2_variance_value)
+        output_result2="Variance in node 'Z' is effecting by {2} % ".format(para2_variance_value)
 
 
 
@@ -102,7 +107,7 @@ def submitquery(request):
     predict_PriceProgram_wrt_DirectSales1 = bn.inference.fit(DAG1, variables=['Price Program Boundary Reached'],
     evidence={'Direct Sale Variance':1})
 
-
+    
     String=''
     String+=str("level :0  "+str(expression.split(' ')))  + '|' 
     lis=expression.split('+')
@@ -178,3 +183,34 @@ def PlotDiagram(request):
     bn.plot(DAG1)
     return render(request,'home.html')  
 
+def generateGraph(expression):
+    path=os.getcwd()
+    graph = pydot.Dot('my_graph', graph_type='graph', bgcolor='white')
+    graph.add_node(pydot.Node(expression))
+    lis=expression.split('+')
+    for i in lis:
+        graph.add_node(pydot.Node(i))
+        graph.add_edge(pydot.Edge(expression, i))
+
+    level=sum(list(degree_list(expression)))
+    for j in range(1,level):
+        for i in lis:
+            dfx= Derivative(i, x).doit()
+            dfy= Derivative(i, y).doit()
+            dfz= Derivative(i, z).doit()
+            
+            if dfx!=0 or dfy!=0 or dfz!=0:
+                if dfx!=0:
+                    graph.add_node(pydot.Node(str(dfx)))
+                    graph.add_edge(pydot.Edge(str(i),str(dfx)))
+                if dfy!=0:
+                    graph.add_node(pydot.Node(str(dfy)))
+                    graph.add_edge(pydot.Edge(str(i),str(dfy)))
+                if dfz!=0:
+                    graph.add_node(pydot.Node(str(dfz)))
+                    graph.add_edge(pydot.Edge(str(i),str(dfz)))
+            else:
+                graph.add_node(pydot.Node(str(0)))
+                graph.add_edge(pydot.Edge(str(i),str(0)))
+    
+    graph.write_png(f"{path}\static\output.png")
